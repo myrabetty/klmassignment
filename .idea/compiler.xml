@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="case-0.1.0_(1).main" target="12" />
       <module name="case-0.1.0_(1).test" target="12" />
+      <module name="klmassignment.main" target="12" />
+      <module name="klmassignment.test" target="12" />
     </bytecodeTargetLevel>
   </component>
 </project>
