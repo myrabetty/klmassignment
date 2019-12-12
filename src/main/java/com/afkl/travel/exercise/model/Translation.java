@@ -14,17 +14,37 @@ public class Translation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id", nullable = false)
-    Location location;
+    @JoinColumn(name = "location", nullable = false)
+    private Location location;
 
     @Column(nullable = false)
-    String language;
+    private String language;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
-    String description;
+    private String description;
+
+    public Translation(){
+
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
