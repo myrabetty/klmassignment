@@ -24,7 +24,7 @@ public class LocationService {
 
     public List<UserLocation> findAll(String language) {
         return ((List<Location>) locationRepository.findAll()).stream()
-                .map(x -> transform(x, language)).flatMap(Optional::stream).collect(Collectors.toList());
+                .map(x -> transform(x, language)).map(Optional::get).collect(Collectors.toList());
     }
 
     public Optional<UserLocation> findByTypeAndCode(String language, String type, String code) {
