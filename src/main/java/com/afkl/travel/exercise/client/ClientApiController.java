@@ -18,7 +18,7 @@ public class ClientApiController {
 
     @RequestMapping(value="/trigger")
     public void triggerClient() throws IOException {
-        clientApi.executeGetRequest();
+        clientApi.printAllAirports();
     }
 
 }

@@ -9,6 +9,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,6 +23,7 @@ import java.io.IOException;
 @Service
 public class ClientApi {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientApi.class);
     private final ClientConfiguration clientConfiguration;
 
     @Autowired
@@ -25,10 +31,25 @@ public class ClientApi {
         this.clientConfiguration = clientConfiguration;
     }
 
-    public void executeGetRequest() throws IOException {
 
-        String type = "country";
-        String code = "US";
+    public void printAllAirports(){
+
+        try {
+            String type = "country";
+            String code = "US";
+            String json_string = executeGetRequest(clientConfiguration.getBaseUrl() + "/" + type + "/" + code);
+            JSONArray result  =  (JSONArray) JSONValue.parse(json_string);
+
+
+
+        } catch (IOException ex){
+            LOGGER.error("something wet wrong, ", ex.getMessage());
+        }
+    }
+
+    public String executeGetRequest(String request) throws IOException {
+
+
         String username = clientConfiguration.getUsername();
         String password = clientConfiguration.getPassword();
         CredentialsProvider provider = new BasicCredentialsProvider();
@@ -40,11 +61,11 @@ public class ClientApi {
                 .setDefaultCredentialsProvider(provider)
                 .build()) {
 
-            HttpGet httpGet = new HttpGet(clientConfiguration.getBaseUrl() + "/" + type + "/" + code);
+            HttpGet httpGet = new HttpGet(request);
             httpGet.setHeader("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
             try (CloseableHttpResponse response = client.execute(httpGet)) {
-                System.out.println(response);
+                return EntityUtils.toString(response.getEntity());
             }
         }
     }

@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 public class Translation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -46,5 +45,9 @@ public class Translation {
 
     public String getDescription() {
         return description;
+    }
+
+    public Long getId(){
+        return id;
     }
 }

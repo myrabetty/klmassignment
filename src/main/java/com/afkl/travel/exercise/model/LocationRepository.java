@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface LocationRepository extends CrudRepository<Location, Long> {
     Optional<Location> findByTypeAndCode(String type, String code);
-    List<Location> findAllByParentId(Long id);
+    List<Location> findAllByCode(String code);
 }
