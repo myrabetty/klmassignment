@@ -23,8 +23,9 @@ public class LocationService {
     }
 
     public List<UserLocation> findAll(String language) {
-        return ((List<Location>) locationRepository.findAll()).stream()
-                .map(x -> transform(x, language)).map(Optional::get).collect(Collectors.toList());
+        return ((List<Location>) locationRepository.findAll())
+                .stream()
+                .map(x -> transform(x, language)).flatMap(Optional::stream).collect(Collectors.toList());
     }
 
     public Optional<UserLocation> findByTypeAndCode(String language, String type, String code) {
@@ -34,30 +35,41 @@ public class LocationService {
 
     private Optional<UserLocation> transform(Location location, String language) {
 
+        if (location.getTranslations().isEmpty()){
+            return createUserLocation(x);
+        }
+
         if (location.getTranslations().stream().anyMatch(x -> language.equalsIgnoreCase(x.getLanguage()))) {
             return location.getTranslations().stream()
-                    .filter(x -> (x.getLanguage().equalsIgnoreCase(language)))
-                    .findFirst().map(x -> createUseLocation(x, location));
+                    .filter(x -> (x.getLanguage().equalsIgnoreCase(language))).findFirst().map(x -> createUserLocation(location));
         }
 
         return location.getTranslations().stream()
-                .filter(x -> (x.getLanguage().equalsIgnoreCase(String.valueOf(Locale.ENGLISH))))
-                .findFirst().map(x -> createUseLocation(x, location));
+                .filter(x -> (x.getLanguage().equalsIgnoreCase(String.valueOf(Locale.ENGLISH)))).findFirst()
+                .map(x -> createUserLocation(location));
     }
 
-    private UserLocation createUseLocation(Translation translation, Location location) {
+    private UserLocation createUserLocation(Location location) {
         UserLocation userLocation = new UserLocation();
         userLocation.setCode(location.getCode());
-        userLocation.setDescription(translation.getDescription());
-        userLocation.setName(translation.getName());
+
+
         userLocation.setType(location.getType());
         userLocation.setLongitude(location.getLongitude());
         userLocation.setLatitude(location.getLatitude());
-        userLocation.setLanguage(translation.getLanguage());
+
         location.getParent().ifPresent(x -> {
             userLocation.setParentCode(x.getCode());
             userLocation.setParentType(x.getType());
         });
+
+
         return userLocation;
+    }
+
+    private void addTranslation(UserLocation userLocation, Translation translation){
+        userLocation.setName(translation.getName());
+        userLocation.setDescription(translation.getDescription());
+        userLocation.setLanguage(translation.getLanguage());
     }
 }
