@@ -9,8 +9,8 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 12
-targetCompatibility = 12
+sourceCompatibility = 11
+targetCompatibility = 11
 
 version = '0.1.0'
 
@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile 'org.apache.httpcomponents:httpclient:4.5.10'
 
     testCompile 'junit:junit:4.12'
 }
