@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/travel")
@@ -16,22 +17,22 @@ public class ApplicationController {
     private LocationService locationService;
 
     @Autowired
-    public ApplicationController(LocationService locationService){
+    public ApplicationController(LocationService locationService) {
         this.locationService = locationService;
     }
 
     @RequestMapping(value = "/locations",
-            method= RequestMethod.GET,
-            produces= MediaType.APPLICATION_JSON_VALUE)
-    public List<UserLocation> findAll(Locale locale){
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserLocation> findAll(Locale locale) {
         return locationService.findAll(locale.getLanguage());
     }
 
     @RequestMapping(value = "/locations/{type}/{code}",
-            method= RequestMethod.GET,
-            produces= MediaType.APPLICATION_JSON_VALUE)
-    public UserLocation findByTypeAndCode(Locale locale, String type, String code){
-        return null;//locationService.findByTypeAndCode(locale.getLanguage(), String type, String code);
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Optional<UserLocation> findByTypeAndCode(Locale locale, String type, String code) {
+        return locationService.findByTypeAndCode(locale.getLanguage(), type, code);
     }
 
 
