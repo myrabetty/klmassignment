@@ -15,61 +15,67 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+
 public class ClientApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientApi.class);
-    private final ClientConfiguration clientConfiguration;
-    private final ObjectMapper objectMapper;
+    private final String username;
+    private final String password;
+    private static final String URL = "http://localhost:8080/travel/locations";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    public ClientApi(ClientConfiguration clientConfiguration, ObjectMapper objectMapper) {
-        this.clientConfiguration = clientConfiguration;
-        this.objectMapper = objectMapper;
+    public static void main(String[] args) {
+        final List<UserLocation> usAirports = new ClientApi("someuser", "psw").getUSAirports();
+        assert usAirports != null;
+        usAirports.forEach(x ->
+        {
+            try {
+                System.out.println(objectMapper.writeValueAsString(x));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
-    public void printAllAirports() {
+    public ClientApi(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    private List<UserLocation> getUSAirports() {
 
         try {
             String type = "country";
             String code = "US";
-            String json_string = executeGetRequest(clientConfiguration.getBaseUrl());
+            String json_string = executeGetRequest();
             final List<UserLocation> userLocations = objectMapper.readValue(json_string, new TypeReference<List<UserLocation>>() {
             });
 
             //first retrieve the cities
-            List<String> cityCodes =  userLocations.stream().filter(x -> code.equals(x.getParentCode()) && type.equals(x.getParentType())).map(x-> x.getCode()).collect(Collectors.toList());
+            List<String> cityCodes = userLocations.stream()
+                    .filter(x -> code.equals(x.getParentCode()) && type.equals(x.getParentType()))
+                    .map(UserLocation::getCode).collect(Collectors.toList());
 
             //then retrieve all airports per city
-            List<UserLocation> airports = userLocations.stream().filter( x -> cityCodes.contains(x.getParentCode()) && "airport".equals(x.getType())).collect(Collectors.toList());
+            return userLocations.stream()
+                    .filter(x -> cityCodes.contains(x.getParentCode()) && "airport".equals(x.getType()))
+                    .collect(Collectors.toList());
 
-            airports.stream().forEach(x ->
-            {
-                try {
-                    System.out.println(objectMapper.writeValueAsString(x));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            });
-
-
-        } catch (IOException ex) {
+                    } catch (IOException ex) {
             LOGGER.error("something wet wrong, ", ex.getMessage());
         }
+        return null;
     }
 
-    private String executeGetRequest(String request) throws IOException {
+    private String executeGetRequest() throws IOException {
 
-        String username = clientConfiguration.getUsername();
-        String password = clientConfiguration.getPassword();
         CredentialsProvider provider = new BasicCredentialsProvider();
         UsernamePasswordCredentials credentials
                 = new UsernamePasswordCredentials(username, password);
@@ -79,7 +85,7 @@ public class ClientApi {
                 .setDefaultCredentialsProvider(provider)
                 .build()) {
 
-            HttpGet httpGet = new HttpGet(request);
+            HttpGet httpGet = new HttpGet(URL);
             httpGet.setHeader("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
             try (CloseableHttpResponse response = client.execute(httpGet)) {

@@ -8,13 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
 
-    LocationRepository locationRepository;
+    private LocationRepository locationRepository;
 
     @Autowired
     public LocationService(LocationRepository locationRepository) {
@@ -29,8 +28,8 @@ public class LocationService {
     }
 
     public UserLocation findByTypeAndCode(String language, String type, String code) {
-         return locationRepository.findByTypeAndCode(type, code)
-                .map(x -> transform(x, language)).orElseGet(() -> new UserLocation());
+        return locationRepository.findByTypeAndCode(type, code)
+                .map(x -> transform(x, language)).orElseGet(UserLocation::new);
     }
 
     private UserLocation transform(Location location, String language) {

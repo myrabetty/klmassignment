@@ -28,7 +28,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity security) throws Exception {
         security.authorizeRequests()
                 .antMatchers("/actuator/health").permitAll()
-                .antMatchers("/actuator/info").permitAll()
+                .antMatchers("/actuator/stats").hasAnyRole("ADMIN")
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/actuator/metrics").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()

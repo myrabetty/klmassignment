@@ -3,9 +3,6 @@ package com.afkl.travel.exercise.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,11 +25,11 @@ public class Location {
     private Double longitude;
     private Double latitude;
 
-    @ManyToOne(cascade={CascadeType.ALL})
-    @JoinColumn(name="parent_id")
+    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "parent_id")
     private Location parent;
 
-    @OneToMany(mappedBy="parent")
+    @OneToMany(mappedBy = "parent")
     private List<Location> children;
 
     @OneToMany(mappedBy = "location")
