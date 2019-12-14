@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/travel")
@@ -32,7 +31,7 @@ public class ApplicationController {
     @RequestMapping(value = "/locations/{type}/{code}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Optional<UserLocation> findByTypeAndCode(Locale locale, @PathVariable("type") String type, @PathVariable("code") String code) {
+    public UserLocation findByTypeAndCode(Locale locale, @PathVariable("type") String type, @PathVariable("code") String code) {
         return locationService.findByTypeAndCode(locale.getLanguage(), type, code);
     }
 

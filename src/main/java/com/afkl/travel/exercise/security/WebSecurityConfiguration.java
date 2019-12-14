@@ -29,10 +29,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         security.authorizeRequests()
                 .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/actuator/info").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/actuator/metrics").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .httpBasic();
+
+        security.headers().frameOptions().disable(); //this is to allow the h2 console access
     }
 
     /**

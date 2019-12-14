@@ -25,28 +25,29 @@ public class LocationService {
     public List<UserLocation> findAll(String language) {
         return ((List<Location>) locationRepository.findAll())
                 .stream()
-                .map(x -> transform(x, language)).flatMap(Optional::stream).collect(Collectors.toList());
+                .map(x -> transform(x, language)).collect(Collectors.toList());
     }
 
-    public Optional<UserLocation> findByTypeAndCode(String language, String type, String code) {
-        return locationRepository.findByTypeAndCode(type, code)
-                .flatMap(x -> transform(x, language));
+    public UserLocation findByTypeAndCode(String language, String type, String code) {
+         return locationRepository.findByTypeAndCode(type, code)
+                .map(x -> transform(x, language)).orElseGet(() -> new UserLocation());
     }
 
-    private Optional<UserLocation> transform(Location location, String language) {
+    private UserLocation transform(Location location, String language) {
 
-        if (location.getTranslations().isEmpty()){
-            return createUserLocation(x);
-        }
+        final UserLocation userLocation = createUserLocation(location);
 
-        if (location.getTranslations().stream().anyMatch(x -> language.equalsIgnoreCase(x.getLanguage()))) {
-            return location.getTranslations().stream()
-                    .filter(x -> (x.getLanguage().equalsIgnoreCase(language))).findFirst().map(x -> createUserLocation(location));
-        }
+        location.getTranslations().stream().filter(x -> language.equalsIgnoreCase(x.getLanguage())).findFirst()
+                .ifPresentOrElse(x -> addTranslation(userLocation, x),
+                        () -> setEnglish(location, userLocation));
 
-        return location.getTranslations().stream()
+        return userLocation;
+    }
+
+    private void setEnglish(Location location, UserLocation userLocation) {
+        location.getTranslations().stream()
                 .filter(x -> (x.getLanguage().equalsIgnoreCase(String.valueOf(Locale.ENGLISH)))).findFirst()
-                .map(x -> createUserLocation(location));
+                .ifPresent(x -> addTranslation(userLocation, x));
     }
 
     private UserLocation createUserLocation(Location location) {
@@ -67,7 +68,7 @@ public class LocationService {
         return userLocation;
     }
 
-    private void addTranslation(UserLocation userLocation, Translation translation){
+    private void addTranslation(UserLocation userLocation, Translation translation) {
         userLocation.setName(translation.getName());
         userLocation.setDescription(translation.getDescription());
         userLocation.setLanguage(translation.getLanguage());

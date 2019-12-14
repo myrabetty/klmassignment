@@ -22,3 +22,7 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+/.idea
+/.gradle
+/gradle
+/out
