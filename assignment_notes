@@ -25,8 +25,8 @@ will return:
 
 Embedded H2 database is not protected for convenience.
 
-actuator/health is also unprotected
-actuator/stats is implementing an end point with the required metrics and it is protected with the following credentials:
+http://localhost:8080/actuator/health is also unprotected
+http://localhost:8080/actuator/stats is implementing an end point with the required metrics and it is protected with the following credentials:
 use:ops
 password:psw
 
