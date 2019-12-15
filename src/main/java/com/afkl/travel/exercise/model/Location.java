@@ -33,7 +33,7 @@ public class Location {
     private List<Location> children;
 
     @OneToMany(mappedBy = "location")
-    List<Translation> translations;
+    private List<Translation> translations;
 
     public Location() {
     }

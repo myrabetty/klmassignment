@@ -30,7 +30,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/actuator/stats").hasAnyRole("ADMIN")
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/actuator/metrics").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .httpBasic();

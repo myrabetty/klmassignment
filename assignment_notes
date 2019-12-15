@@ -1,0 +1,39 @@
+The springboot application can run locally or in a container.
+To run the application in a container built the jar first then run docker-compose up
+In both cases the application exposes port 8080.
+
+
+Users can execute http request using the following credentials:
+user: someuser
+password: psw
+
+http://localhost:8080/travel/locations
+
+returns all locations. When a translation is available in the localized language: name, description and language are returned
+in the localized language. Otherwise english is returned if present. Otherwise fields are left empty.
+
+
+http://localhost:8080/travel/locations/{type}/{code}
+
+will return the location for the given code and type, with localized information if present.
+
+Example
+http://localhost:8080/travel/locations/city/YYT
+
+will return:
+{"code":"YYT","name":"Saint Johns","language":"EN","type":"city","latitude":47.61833,"longitude":-52.75222,"description":"Saint Johns (YYT)","parentCode":"CA","parentType":"country"}
+
+Embedded H2 database is not protected for convenience.
+
+actuator/health is also unprotected
+actuator/stats is implementing an end point with the required metrics and it is protected with the following credentials:
+use:ops
+password:psw
+
+a Client API contains a main method which can be run and prints all the airport in the US.
+
+For lack of time I did not implement unit tests.
+
+
+
+

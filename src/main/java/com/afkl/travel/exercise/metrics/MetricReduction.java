@@ -1,6 +1,5 @@
 package com.afkl.travel.exercise.metrics;
 
-
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -77,7 +76,6 @@ public class MetricReduction {
     private long reduceCount(Collection<Meter> httpMeters, Predicate<Meter> filter) {
         return httpMeters.stream().filter(filter).map(x -> ((CumulativeTimer) x).count()).reduce(Long::sum).orElse(0L);
     }
-
 
     private boolean isOk(Meter meter) {
         return Objects.equals(meter.getId().getTag("outcome"), "SUCCESS");

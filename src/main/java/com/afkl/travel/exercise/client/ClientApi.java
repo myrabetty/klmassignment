@@ -31,7 +31,7 @@ public class ClientApi {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) {
-        final List<UserLocation> usAirports = new ClientApi("someuser", "psw").getUSAirports();
+        final var usAirports = new ClientApi("someuser", "psw").getUSAirports();
         assert usAirports != null;
         usAirports.forEach(x ->
         {
@@ -44,7 +44,7 @@ public class ClientApi {
 
     }
 
-    public ClientApi(String username, String password) {
+    private ClientApi(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -68,7 +68,7 @@ public class ClientApi {
                     .filter(x -> cityCodes.contains(x.getParentCode()) && "airport".equals(x.getType()))
                     .collect(Collectors.toList());
 
-                    } catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.error("something wet wrong, ", ex.getMessage());
         }
         return null;

@@ -2,6 +2,7 @@ version: '3.0'
 
 services:
   travel_application:
+    build: .
     container_name: travel-application-docker
     ports:
       - "8080:8080"
